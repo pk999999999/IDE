@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-electron/
+target/
+release/
+resources/bin/*
+!resources/bin/.gitkeep
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store

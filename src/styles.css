@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: Inter, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+button:focus-visible {
+  outline: 1px solid #b5a0ff;
+  outline-offset: 2px;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 9px;
+  background: #343948;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+.titlebar {
+  -webkit-app-region: drag;
+}
+.no-drag,
+button {
+  -webkit-app-region: no-drag;
+}
+.panel-heading {
+  display: flex;
+  height: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #292d38;
+  padding: 0 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  color: #8b94a9;
+}
+.field {
+  border: 1px solid #303646;
+  border-radius: 5px;
+  background: #1b1f29;
+  padding: 7px 9px;
+  font-size: 11px;
+  color: #c0c9dc;
+  outline: none;
+}
+.field:focus {
+  border-color: #9380c9;
+}
+.field::placeholder {
+  color: #596980;
+}
+kbd {
+  border: 1px solid #2d3340;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-family: inherit;
+  font-size: 9px;
+  color: #748097;
+}
+.resize-x {
+  width: 3px;
+  flex-shrink: 0;
+  background: #292d38;
+  cursor: col-resize;
+  z-index: 5;
+}
+.resize-y {
+  height: 3px;
+  flex-shrink: 0;
+  background: #292d38;
+  cursor: row-resize;
+  z-index: 5;
+}
+.resize-x:hover,
+.resize-y:hover {
+  background: #8d75ca;
+}
+.welcome {
+  min-height: 0;
+  overflow: hidden;
+  padding: 16px 0;
+  background: radial-gradient(ellipse at 50% 40%, #29213933, transparent 65%);
+}
+.welcome > .mt-12 {
+  display: none;
+}
+.xterm {
+  height: 100%;
+}
+webview {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  background: white;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

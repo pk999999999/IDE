@@ -1,0 +1,32 @@
+{
+  "appId": "studio.degravity.desktop",
+  "productName": "DeGravity Studio",
+  "icon": "build/icon.png",
+  "directories": { "output": "release", "buildResources": "build" },
+  "files": ["dist/**/*", "dist-electron/**/*", "package.json"],
+  "extraResources": [
+    { "from": "resources/bin", "to": "bin", "filter": ["antigravity-engine*"] }
+  ],
+  "asar": true,
+  "npmRebuild": false,
+  "artifactName": "DeGravity-Studio-${version}-${os}-${arch}.${ext}",
+  "mac": {
+    "target": ["dmg", "zip"],
+    "category": "public.app-category.developer-tools",
+    "hardenedRuntime": true,
+    "entitlements": "build/entitlements.mac.plist",
+    "entitlementsInherit": "build/entitlements.mac.plist",
+    "binaries": ["Contents/Resources/bin/antigravity-engine"]
+  },
+  "win": { "target": ["nsis"] },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "perMachine": false
+  },
+  "linux": {
+    "target": ["AppImage", "deb"],
+    "category": "Development",
+    "maintainer": "DeGravity Studio contributors"
+  }
+}
