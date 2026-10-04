@@ -74,6 +74,9 @@ pub async fn generate(
         "openai" => client.post("https://api.openai.com/v1/chat/completions")
             .bearer_auth(key("OPENAI_API_KEY")?)
             .json(&json!({"model":model.model,"stream":true,"messages":[{"role":"system","content":system},{"role":"user","content":prompt}]})),
+        "llama" => client.post("https://api.llama.com/compat/v1/chat/completions")
+            .bearer_auth(key("LLAMA_API_KEY")?)
+            .json(&json!({"model":model.model,"stream":true,"messages":[{"role":"system","content":system},{"role":"user","content":prompt}]})),
         "anthropic" => client.post("https://api.anthropic.com/v1/messages")
             .header("x-api-key", key("ANTHROPIC_API_KEY")?).header("anthropic-version", "2023-06-01")
             .json(&json!({"model":model.model,"max_tokens":16000,"stream":true,"system":system,"messages":[{"role":"user","content":prompt}]})),
@@ -106,7 +109,7 @@ pub async fn generate(
                 bail!("Provider reported a stream error");
             }
             let delta = match model.provider.as_str() {
-                "openai" => value["choices"][0]["delta"]["content"]
+                "openai" | "llama" => value["choices"][0]["delta"]["content"]
                     .as_str()
                     .unwrap_or("")
                     .to_owned(),

@@ -12,7 +12,7 @@ Generated and checked on Windows. This file distinguishes implemented code from 
 | Rust native compilation and unit tests | Passed on Windows: 3 unit tests and optimized engine build |
 | Real sidecar / native PTY smoke | Passed on Windows: IPC, files, gitignore, PTY I/O and workspace cwd |
 | Hidden Electron UI smoke | Passed with the real Rust sidecar, Monaco, preload and file dialog |
-| Live OpenAI / Anthropic / Gemini requests | Not run; no credentials supplied |
+| Live OpenAI / Anthropic / Gemini / legacy Meta Llama requests | Not run; provider credential egress has not been approved for live validation |
 | Docker verification and repair cycle | Not run; Docker/image not available in this session |
 | Installed LSP / MCP end-to-end tests | Not run; external servers not configured |
 | macOS / Windows / Linux installers | CI configuration provided; not built or signed here |

@@ -41,6 +41,7 @@ app
       openai: false,
       anthropic: false,
       gemini: false,
+      llama: false,
     }));
     const window = new BrowserWindow({
       show: false,
@@ -155,6 +156,15 @@ app
       `Boolean(document.querySelector('input[type="password"]'))`,
     );
     if (!settings) throw new Error("Settings panel did not mount");
+    const llama = await window.webContents.executeJavaScript(
+      `(() => { const select = document.querySelector('select[aria-label="Provider"]'); select.value = 'llama'; select.dispatchEvent(new Event('change', { bubbles: true })); return Boolean(select.querySelector('option[value="llama"]')); })()`,
+    );
+    if (!llama) throw new Error("Meta Llama provider is missing from Settings");
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    const llamaModel = await window.webContents.executeJavaScript(
+      `Boolean(document.querySelector('input[value="Llama-4-Maverick-17B-128E-Instruct-FP8"]'))`,
+    );
+    if (!llamaModel) throw new Error("Meta Llama default model did not load");
     if (errors.length) throw new Error(errors.join("\n"));
     console.log(
       `UI smoke passed: production bundle, isolated preload, workspace shell, agent panel and settings. Native engine integration: ${Boolean(bridge)}.`,

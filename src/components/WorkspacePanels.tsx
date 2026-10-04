@@ -253,6 +253,7 @@ export function SettingsPanel() {
     openai: false,
     anthropic: false,
     gemini: false,
+    llama: false,
   });
   const [key, setKey] = useState("");
   const [command, setCommand] = useState("typescript-language-server");
@@ -282,7 +283,9 @@ export function SettingsPanel() {
                       ? "gpt-4.1"
                       : e.target.value === "anthropic"
                         ? "claude-sonnet-4-20250514"
-                        : "gemini-2.5-pro",
+                        : e.target.value === "gemini"
+                          ? "gemini-2.5-pro"
+                          : "Llama-4-Maverick-17B-128E-Instruct-FP8",
                 },
               })
             }
@@ -290,6 +293,7 @@ export function SettingsPanel() {
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
             <option value="gemini">Google Gemini</option>
+            <option value="llama">Meta Llama API (legacy)</option>
           </select>
           <label className="mt-3 block text-[10px] text-[#8190ab]">
             Model ID

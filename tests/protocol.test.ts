@@ -33,6 +33,16 @@ describe("IPC boundary", () => {
       }),
     ).toEqual({ path: "x", content: "new", expected: null });
   });
+  it("allows a Meta Llama plan through the validated IPC boundary", () => {
+    const request = {
+      model: {
+        provider: "llama",
+        model: "Llama-4-Maverick-17B-128E-Instruct-FP8",
+      },
+      prompt: "Explain this file",
+    };
+    expect(validateRequest("agent.plan", request)).toEqual(request);
+  });
 });
 describe("embedded preview isolation", () => {
   it.each([
