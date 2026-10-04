@@ -42,6 +42,7 @@ const envKeys: Record<Provider, string> = {
   anthropic: "ANTHROPIC_API_KEY",
   gemini: "GEMINI_API_KEY",
   llama: "LLAMA_API_KEY",
+  meta: "MODEL_API_KEY",
 };
 const development =
   !app.isPackaged && process.env.DEGRAVITY_DEV_URL === "http://127.0.0.1:5173";

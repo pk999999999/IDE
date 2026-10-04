@@ -77,6 +77,9 @@ pub async fn generate(
         "llama" => client.post("https://api.llama.com/compat/v1/chat/completions")
             .bearer_auth(key("LLAMA_API_KEY")?)
             .json(&json!({"model":model.model,"stream":true,"messages":[{"role":"system","content":system},{"role":"user","content":prompt}]})),
+        "meta" => client.post("https://api.meta.ai/v1/chat/completions")
+            .bearer_auth(key("MODEL_API_KEY")?)
+            .json(&json!({"model":model.model,"stream":true,"messages":[{"role":"developer","content":system},{"role":"user","content":prompt}]})),
         "anthropic" => client.post("https://api.anthropic.com/v1/messages")
             .header("x-api-key", key("ANTHROPIC_API_KEY")?).header("anthropic-version", "2023-06-01")
             .json(&json!({"model":model.model,"max_tokens":16000,"stream":true,"system":system,"messages":[{"role":"user","content":prompt}]})),
@@ -87,6 +90,9 @@ pub async fn generate(
     };
     let response = tokio::select! { _ = cancel.cancelled() => bail!("Cancelled"), response = request.send() => response? };
     if !response.status().is_success() {
+        if model.provider == "llama" && response.status() == reqwest::StatusCode::UNAUTHORIZED {
+            bail!("Meta's legacy Llama API rejected this key (HTTP 401). A current Meta Model API key is separate; configure it under Meta Model API.");
+        }
         bail!(
             "Provider returned HTTP {}. Check your key, model access and quota.",
             response.status().as_u16()
@@ -109,7 +115,7 @@ pub async fn generate(
                 bail!("Provider reported a stream error");
             }
             let delta = match model.provider.as_str() {
-                "openai" | "llama" => value["choices"][0]["delta"]["content"]
+                "openai" | "llama" | "meta" => value["choices"][0]["delta"]["content"]
                     .as_str()
                     .unwrap_or("")
                     .to_owned(),

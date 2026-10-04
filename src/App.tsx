@@ -20,6 +20,7 @@ import {
   X,
 } from "lucide-react";
 import { useStudio } from "./store";
+import { selectConfiguredModel } from "./lib/models";
 import { Editor } from "./components/Editor";
 import { AgentSidebar } from "./components/AgentSidebar";
 import { TerminalPanel } from "./components/TerminalPanel";
@@ -42,6 +43,22 @@ export default function App() {
   const [sideWidth, setSideWidth] = useState(230);
   const [agentWidth, setAgentWidth] = useState(355);
   const [bottomVisible, setBottomVisible] = useState(true);
+  useEffect(() => {
+    let active = true;
+    if (window.studio)
+      void window.studio
+        .keyStatus()
+        .then((configured) => {
+          if (!active) return;
+          const state = useStudio.getState();
+          const model = selectConfiguredModel(state.model, configured);
+          if (model !== state.model) state.set({ model });
+        })
+        .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
   useEffect(() => {
     const action = (name: string) => {
       const state = useStudio.getState();

@@ -32,7 +32,7 @@ degravity-studio/
 │   ├── workspace.rs            Confined paths and atomic file writes
 │   ├── terminal.rs             portable-pty session manager
 │   ├── context.rs              Tree-sitter summaries and local vectors
-│   ├── providers.rs            OpenAI / Anthropic / Gemini / Llama SSE adapters
+│   ├── providers.rs            OpenAI / Anthropic / Gemini / Meta SSE adapters
 │   ├── agent.rs                Plans, preconditions, diffs, rollback
 │   ├── process.rs              Git and Docker verification runner
 │   └── peer.rs                 MCP stdio and LSP Content-Length peers
@@ -68,11 +68,11 @@ npm run dev
 
 `build:engine` compiles the native sidecar and copies it to `resources/bin/`. Development launches Vite on `127.0.0.1:5173`, builds the main/preload scripts and opens Electron. If the port is occupied, stop the other server first. The UI-only Vite command is `npm run dev:ui`; native features require Electron.
 
-Open a trusted project folder. Set a provider and model in Settings. Save a key through the OS-backed credential store, then reopen the folder to start a fresh engine with those credentials. A workspace reopen discards session history and closes terminals, so save work first.
+Open a trusted project folder. Set a provider and model in Settings. Save a key through the OS-backed credential store, then reopen the folder to start a fresh engine with those credentials. When exactly one provider key is configured, the app selects that provider automatically on startup. A workspace reopen discards session history and closes terminals, so save work first.
 
-For development you can instead copy `.env.example` to `.env` and fill in `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, or `LLAMA_API_KEY`. Electron main loads this file; Vite never receives these values. Do not prefix secrets with `VITE_`. Packaged builds use the credential store or environment variables.
+For development you can instead copy `.env.example` to `.env` and fill in `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `LLAMA_API_KEY`, or `MODEL_API_KEY`. Electron main loads this file; Vite never receives these values. Do not prefix secrets with `VITE_`. Packaged builds use the credential store or environment variables. If exactly one key is configured, its provider is selected automatically; you do not need to paste the key into Settings.
 
-The **Meta Llama API (legacy)** option uses Meta's older OpenAI-compatible `api.llama.com` endpoint and a Llama API key. Select it in Settings and use a model ID enabled for that key. [Meta's current Model API](https://dev.meta.ai/docs/authentication) uses a different endpoint and key format; its keys are not interchangeable with legacy Llama API keys. The legacy integration has not been verified against a live account.
+The **Meta Llama API (legacy)** option uses Meta's older OpenAI-compatible `api.llama.com` endpoint and a Llama API key. The **Meta Model API** option uses [Meta's current `api.meta.ai` chat endpoint](https://dev.meta.ai/docs/protocols/chat-completions) with `MODEL_API_KEY` and defaults to `muse-spark-1.3`. The [current key format](https://dev.meta.ai/docs/authentication) differs from the legacy Llama key format; the keys are not interchangeable. Neither Meta integration is verified with a live account in CI.
 
 ## Agent workflow
 

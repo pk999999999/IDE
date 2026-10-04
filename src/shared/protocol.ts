@@ -5,7 +5,7 @@ const id = z.string().min(1).max(100);
 const empty = z.object({}).strict();
 export const modelSchema = z
   .object({
-    provider: z.enum(["openai", "anthropic", "gemini", "llama"]),
+    provider: z.enum(["openai", "anthropic", "gemini", "llama", "meta"]),
     model: z.string().min(1).max(120),
   })
   .strict();

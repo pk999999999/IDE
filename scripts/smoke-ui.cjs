@@ -41,7 +41,8 @@ app
       openai: false,
       anthropic: false,
       gemini: false,
-      llama: false,
+      llama: true,
+      meta: false,
     }));
     const window = new BrowserWindow({
       show: false,
@@ -100,9 +101,9 @@ app
     await window.loadURL("studio://app/index.html");
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const initial = await window.webContents.executeJavaScript(
-      `({title:document.title,welcome:document.body.innerText.includes('Space to build.'),agent:document.body.innerText.includes('Agent workspace'),bridge:typeof window.studio?.request})`,
+      `({title:document.title,welcome:document.body.innerText.includes('Space to build.'),agent:document.body.innerText.includes('Agent workspace'),bridge:typeof window.studio?.request,metaSelected:document.body.innerText.includes('llama / Llama-4-Maverick-17B-128E-Instruct-FP8')})`,
     );
-    if (!initial.welcome || !initial.agent || initial.bridge !== "function")
+    if (!initial.welcome || !initial.agent || !initial.metaSelected || initial.bridge !== "function")
       throw new Error(JSON.stringify(initial));
     if (bridge) {
       await window.webContents.executeJavaScript(

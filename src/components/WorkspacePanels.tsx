@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useStudio } from "../store";
 import { rpc } from "../lib/api";
+import { modelFor } from "../lib/models";
 import { startLsp } from "../lib/lsp";
 import { isPreviewURL, type Provider } from "../shared/protocol";
 import { Button } from "./ui/button";
@@ -254,6 +255,7 @@ export function SettingsPanel() {
     anthropic: false,
     gemini: false,
     llama: false,
+    meta: false,
   });
   const [key, setKey] = useState("");
   const [command, setCommand] = useState("typescript-language-server");
@@ -275,25 +277,14 @@ export function SettingsPanel() {
             className="field w-full"
             value={s.model.provider}
             onChange={(e) =>
-              s.set({
-                model: {
-                  provider: e.target.value as Provider,
-                  model:
-                    e.target.value === "openai"
-                      ? "gpt-4.1"
-                      : e.target.value === "anthropic"
-                        ? "claude-sonnet-4-20250514"
-                        : e.target.value === "gemini"
-                          ? "gemini-2.5-pro"
-                          : "Llama-4-Maverick-17B-128E-Instruct-FP8",
-                },
-              })
+              s.set({ model: modelFor(e.target.value as Provider) })
             }
           >
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic</option>
             <option value="gemini">Google Gemini</option>
             <option value="llama">Meta Llama API (legacy)</option>
+            <option value="meta">Meta Model API</option>
           </select>
           <label className="mt-3 block text-[10px] text-[#8190ab]">
             Model ID

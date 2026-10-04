@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { validateRequest, isPreviewURL } from "../src/shared/protocol";
 import { JsonLines } from "../electron/engine";
 import { fileURI } from "../src/lib/utils";
+import { modelFor, selectConfiguredModel } from "../src/lib/models";
 import { parseGitStatus } from "../src/components/WorkspacePanels";
 
 describe("IPC boundary", () => {
@@ -89,4 +90,40 @@ it("parses NUL-delimited Git paths, including rename source records", () => {
     { path: "hello world.ts", index: "?", worktree: "?" },
     { path: "code.ts", index: " ", worktree: "M" },
   ]);
+});
+it("automatically selects the only configured provider without replacing a chosen model", () => {
+  const current = modelFor("openai");
+  expect(
+    selectConfiguredModel(current, {
+      openai: false,
+      anthropic: false,
+      gemini: false,
+      llama: true,
+      meta: false,
+    }),
+  ).toEqual(modelFor("llama"));
+  expect(
+    selectConfiguredModel(
+      { provider: "llama", model: "my-custom-model" },
+      { openai: false, anthropic: false, gemini: false, llama: true, meta: false },
+    ),
+  ).toEqual({ provider: "llama", model: "my-custom-model" });
+  expect(
+    selectConfiguredModel(current, {
+      openai: false,
+      anthropic: true,
+      gemini: false,
+      llama: true,
+      meta: false,
+    }),
+  ).toEqual(current);
+  expect(
+    selectConfiguredModel(current, {
+      openai: false,
+      anthropic: false,
+      gemini: false,
+      llama: true,
+      meta: true,
+    }),
+  ).toEqual(modelFor("meta"));
 });
