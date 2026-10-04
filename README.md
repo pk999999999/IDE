@@ -114,7 +114,7 @@ npm run test:ui
 npm run package
 ```
 
-`test:smoke` uses a disposable workspace to exercise the real sidecar, optimistic saves, path protection, ignore rules and a native PTY. `test:ui` uses a hidden Electron window to load the production renderer/preload and writes `docs/screenshots/studio.png`.
+`test:smoke` uses a disposable workspace to exercise the real sidecar, optimistic saves, path protection, ignore rules and a native PTY. `test:ui` uses a hidden Electron window to load the production renderer/preload. Set `DEGRAVITY_SMOKE_CAPTURE=1` to refresh `docs/screenshots/studio.png` with a visible-window capture.
 
 Packaging outputs go to `release/`:
 
@@ -124,7 +124,7 @@ Packaging outputs go to `release/`:
 | Windows | NSIS `.exe` | x64 |
 | Linux | AppImage and DEB | x64 |
 
-Each CI runner compiles its own Rust binary and bundles it outside ASAR via `extraResources`. This avoids pretending that macOS signing or native C dependencies can be cross-compiled reliably on any host. No remote repository or CI run is created by generating these files.
+Each CI runner compiles its own Rust binary and bundles it outside ASAR via `extraResources`. Native runners handle platform-specific compilation and signing requirements.
 
 Pull requests and main-branch builds package unsigned test artifacts. Version tags (`v*`) require signing credentials for Windows/macOS and enable notarization for macOS. Configure `WIN_CSC_LINK`, `WIN_CSC_KEY_PASSWORD`, `MAC_CSC_LINK`, and `MAC_CSC_KEY_PASSWORD` in GitHub secrets; a single certificate file cannot sign both platforms. macOS additionally requires `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, and `APPLE_TEAM_ID`. Configure approval protection on the `release` environment before enabling tagged releases; ordinary builds use the `build` environment. No artifact is automatically published to a public release or update feed.
 

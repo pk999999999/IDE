@@ -136,17 +136,17 @@ app
       );
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
-    if (process.env.DEGRAVITY_SMOKE_SHOW_CAPTURE) {
+    if (process.env.DEGRAVITY_SMOKE_CAPTURE) {
       window.showInactive();
       await new Promise((resolve) => setTimeout(resolve, 700));
+      const screenshot = await window.webContents.capturePage();
+      window.hide();
+      await mkdir(path.join(root, "docs", "screenshots"), { recursive: true });
+      await writeFile(
+        path.join(root, "docs", "screenshots", "studio.png"),
+        screenshot.toPNG(),
+      );
     }
-    const screenshot = await window.webContents.capturePage();
-    if (process.env.DEGRAVITY_SMOKE_SHOW_CAPTURE) window.hide();
-    await mkdir(path.join(root, "docs", "screenshots"), { recursive: true });
-    await writeFile(
-      path.join(root, "docs", "screenshots", "studio.png"),
-      screenshot.toPNG(),
-    );
     await window.webContents.executeJavaScript(
       `document.querySelector('button[title="Settings"]').click()`,
     );
@@ -157,7 +157,7 @@ app
     if (!settings) throw new Error("Settings panel did not mount");
     if (errors.length) throw new Error(errors.join("\n"));
     console.log(
-      `UI smoke passed: production bundle, isolated preload, workspace shell, agent panel, settings and screenshot. Native engine integration: ${Boolean(bridge)}.`,
+      `UI smoke passed: production bundle, isolated preload, workspace shell, agent panel and settings. Native engine integration: ${Boolean(bridge)}.`,
     );
     await cleanup();
     clearTimeout(timeout);
