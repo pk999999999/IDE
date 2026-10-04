@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createInterface } from "node:readline";
@@ -82,12 +82,23 @@ try {
   while (!terminalOutput.includes("DEGRAVITY_PTY_OK") && Date.now() < deadline)
     await new Promise((r) => setTimeout(r, 50));
   assert(terminalOutput.includes("DEGRAVITY_PTY_OK"), "PTY returned no output");
-  if (process.platform === "win32") {
-    const cwdDeadline = Date.now() + 5000;
-    while (!terminalOutput.toLowerCase().includes(root.toLowerCase()) && Date.now() < cwdDeadline)
+  // A prompt may show an aliased Windows temp path. Probe the actual shell cwd.
+  const probe = "degravity-pty-cwd-probe.txt";
+  await request("pty.write", {
+    id: pty.id,
+    text: `echo DEGRAVITY_CWD_OK > ${probe}\r`,
+  });
+  const cwdDeadline = Date.now() + 10000;
+  let probeContent = "";
+  while (!probeContent.includes("DEGRAVITY_CWD_OK") && Date.now() < cwdDeadline) {
+    probeContent = await readFile(join(root, probe), "utf8").catch(() => "");
+    if (!probeContent.includes("DEGRAVITY_CWD_OK"))
       await new Promise((r) => setTimeout(r, 50));
-    assert(terminalOutput.toLowerCase().includes(root.toLowerCase()), "PTY started outside the workspace");
   }
+  assert(
+    probeContent.includes("DEGRAVITY_CWD_OK"),
+    `PTY started outside the workspace; output: ${terminalOutput.slice(-1000)}`,
+  );
   await request("pty.resize", { id: pty.id, cols: 100, rows: 30 });
   await request("pty.close", { id: pty.id });
   await request("fs.rename", { from: "src/main.ts", to: "src/renamed.ts" });

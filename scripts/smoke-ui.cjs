@@ -52,6 +52,7 @@ app
         sandbox: true,
         nodeIntegration: false,
         webviewTag: true,
+        backgroundThrottling: false,
       },
     });
     const binary = path.join(
@@ -118,9 +119,10 @@ app
       );
       await new Promise((resolve) => setTimeout(resolve, 2200));
       const editor = await window.webContents.executeJavaScript(
-        `Boolean(document.querySelector('.monaco-editor')) && document.body.innerText.includes('Engine connected')`,
+        `({connected:document.body.innerText.includes('Engine connected'),monaco:Boolean(document.querySelector('.monaco-editor')),lines:document.querySelectorAll('.view-line').length})`,
       );
-      if (!editor) throw new Error("Monaco or real engine did not connect");
+      if (!editor.connected || !editor.monaco || editor.lines < 5)
+        throw new Error(`Monaco did not render the source file: ${JSON.stringify(editor)}`);
       await window.webContents.executeJavaScript(
         `document.querySelector('button[title="New file"]').click()`,
       );
@@ -134,7 +136,12 @@ app
       );
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
+    if (process.env.DEGRAVITY_SMOKE_SHOW_CAPTURE) {
+      window.showInactive();
+      await new Promise((resolve) => setTimeout(resolve, 700));
+    }
     const screenshot = await window.webContents.capturePage();
+    if (process.env.DEGRAVITY_SMOKE_SHOW_CAPTURE) window.hide();
     await mkdir(path.join(root, "docs", "screenshots"), { recursive: true });
     await writeFile(
       path.join(root, "docs", "screenshots", "studio.png"),
